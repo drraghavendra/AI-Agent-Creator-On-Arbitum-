@@ -5,7 +5,7 @@
 
 This project aims to democratize access to AI-powered automation by creating a decentralized platform that enables users to build, deploy, and manage AI agents on the **Arbitrum blockchain** without requiring traditional coding expertise. Our platform provides an intuitive interface to define the logic, configuration, and behavior of AI agents, which are then executed through a combination of on-chain smart contracts and off-chain infrastructure.
 
-The system leverages the **scalability and low fees of Arbitrum**, the power of **Rust (Rig engine)** for off-chain orchestration, and the **ARC utility token** for platform access and governance.
+The system leverages the **scalability and low fees of Arbitrum**, the power of **Rust (Rig engine)** for off-chain orchestration, and the **ARB utility token** for platform access and governance.
 
 ---
 
