@@ -107,6 +107,8 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 
 ---
 
+# Deployed Smart on Arbitrum sepolia Testnet Address 0xB70c85fE15C2FF1Fa4c26B2794d2811387A4aa8F
+
 # AI Agents Backend (Node.js)
 
 
