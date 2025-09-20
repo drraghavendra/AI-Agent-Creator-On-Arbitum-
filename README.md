@@ -111,7 +111,7 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 
 **Phase 1: Core Infrastructure**
 
-* Solidity contracts (ARC token + AgentRegistry).
+* Solidity contracts (ARB token + AgentRegistry).
 * Rust Rig backend for no-code agent deployment.
 * Basic web UI.
 
