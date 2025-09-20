@@ -17,24 +17,10 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 
 # Core Components
 
-### Rig (Core Engine)
-
-**Description**: Rig is the heart of the platform — a custom framework and set of tools built using **Rust** that orchestrates and manages the lifecycle of AI agents.
-
-**Functionality**:
-
-* **Agent Definition**: Users define AI agents via a no-code interface.
-* **Strategy Customization**: Pre-built templates (e.g., DeFi trading, governance automation, analytics).
-* **Deployment Automation**: Pushes agent configuration to Arbitrum smart contracts.
-* **Monitoring & Management**: Tracks agent activity and allows updates.
-
-**Implementation**: Rust backend with secure interaction to Arbitrum contracts using `ethers-rs`.
-
----
 
 ### Smart Contracts (Solidity on Arbitrum)
 
-**Description**: Solidity-based contracts deployed on Arbitrum manage AI agent metadata, execution state, and ARC token integration.
+**Description**: Solidity-based contracts deployed on Arbitrum manage AI agent metadata, execution state, and ARB token integration.
 
 **Functionality**:
 
@@ -47,7 +33,7 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 
 ---
 
-### ARC Token (ERC-20 Utility & Governance)
+### ARB Token (ERC-20 Utility & Governance)
 
 **Description**: ARC is the ERC-20 token powering the platform.
 
@@ -167,6 +153,4 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 
 ---
 
-⚡ Adaptation complete: all Solana-specific references are replaced with **Arbitrum-native equivalents** (ERC-20, Solidity, Chainlink, MetaMask, etc.), while keeping Rust at the heart of your **Rig engine**.
-
-Do you want me to **extend this into a whitepaper-style doc with architecture diagrams** (contracts + Rig + frontend + marketplace), or keep it as a clean overview for now?
+⚡
