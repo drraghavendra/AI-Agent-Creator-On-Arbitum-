@@ -129,11 +129,11 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 **Phase 4: Community Marketplace**
 
 * Launch module marketplace for reusable AI logic.
-* Add monetization and ARC payouts.
+* Add monetization and ARB payouts.
 
 **Phase 5: Governance Implementation**
 
-* On-chain governance via ARC.
+* On-chain governance via ARB.
 * Community voting for protocol upgrades.
 
 ---
