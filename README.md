@@ -165,7 +165,7 @@ GET /api/agents/:id
 # Results & Outcomes
 
 * **AI Agents on Arbitrum**: No-code deployment of automation tools.
-* **ARC-Powered Economy**: Utility and governance token to incentivize growth.
+* **ARB-Powered Economy**: Utility and governance token to incentivize growth.
 * **Community Marketplace**: Reusable AI modules shared and monetized.
 * **Scalable Automation**: Lower gas fees and high throughput on Arbitrum.
 
@@ -173,7 +173,7 @@ GET /api/agents/:id
 
 # Conclusion
 
-**"Build AI Agents with No Code on Arbitrum"** unlocks the power of AI for the masses. By combining Arbitrum’s speed and scalability, Solidity smart contracts, Rust-powered Rig engine, and the ARC governance token, this platform transforms how decentralized AI automation is built, deployed, and managed.
+**"Build AI Agents with No Code on Arbitrum"** unlocks the power of AI for the masses. By combining Arbitrum’s speed and scalability, Solidity smart contracts, and the ARB governance token, this platform transforms how decentralized AI automation is built, deployed, and managed.
 
 ---
 
