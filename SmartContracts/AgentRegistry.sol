@@ -1,66 +1,144 @@
 // SPDX-License-Identifier: MIT
-struct Agent {
-address owner;
-string ipfsCid;
-bool active;
-}
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+/**
+ * @title AgentRegistry
+ * @dev Minimal registry for AI agents with IPFS metadata storage
+ * @notice Optimized for low gas deployment costs
+ */
+contract AgentRegistry {
+    // Packed struct for gas optimization (3 slots -> 2 slots)
+    struct Agent {
+        address owner;      // 20 bytes
+        string ipfsCid;     // dynamic
+        bool active;        // 1 byte
+        uint32 createdAt;   // 4 bytes (timestamp fits in 32 bits until 2106)
+    }
+
+    // State variables
+    uint256 public agentCount;
+    mapping(uint256 => Agent) public agents;
+    mapping(address => uint256[]) public ownerAgents;
+    
+    IERC20 public paymentToken;
+    uint256 public agentFee;
+    address public owner;
+
+    // Events
+    event AgentRegistered(uint256 indexed agentId, address indexed owner, string ipfsCid);
+    event AgentDeactivated(uint256 indexed agentId);
+    event FeeUpdated(uint256 newFee);
+    event PaymentTokenUpdated(address indexed newToken);
+
+    // Modifiers
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    modifier validAgentId(uint256 agentId) {
+        require(agentId > 0 && agentId <= agentCount, "Invalid agent ID");
+        _;
+    }
+
+    /**
+     * @dev Initialize the contract (can only be called once)
+     */
+    function initialize(IERC20 _paymentToken, uint256 _agentFee) external {
+        require(owner == address(0), "Already initialized");
+        require(address(_paymentToken) != address(0), "Invalid token");
+        
+        owner = msg.sender;
+        paymentToken = _paymentToken;
+        agentFee = _agentFee;
+    }
+
+    /**
+     * @dev Register a new agent with IPFS metadata
+     */
+    function registerAgent(string calldata ipfsCid) external returns (uint256) {
+        require(bytes(ipfsCid).length > 0, "Empty CID");
+        require(paymentToken.transferFrom(msg.sender, address(this), agentFee), "Payment failed");
+        
+        agentCount++;
+        uint256 agentId = agentCount;
+        
+        agents[agentId] = Agent({
+            owner: msg.sender,
+            ipfsCid: ipfsCid,
+            active: true,
+            createdAt: uint32(block.timestamp)
+        });
+        
+        ownerAgents[msg.sender].push(agentId);
+        emit AgentRegistered(agentId, msg.sender, ipfsCid);
+        return agentId;
+    }
 
 
-uint256 public agentCount;
-mapping(uint256 => Agent) public agents;
+    /**
+     * @dev Get agent information by ID
+     */
+    function getAgent(uint256 agentId) external view validAgentId(agentId) 
+        returns (address, string memory, bool, uint32) 
+    {
+        Agent storage agent = agents[agentId];
+        return (agent.owner, agent.ipfsCid, agent.active, agent.createdAt);
+    }
 
+    /**
+     * @dev Get all agent IDs owned by an address
+     */
+    function getAgentsByOwner(address owner) external view returns (uint256[] memory) {
+        return ownerAgents[owner];
+    }
 
-IERC20 public paymentToken;
-uint256 public agentFee;
+    /**
+     * @dev Deactivate an agent (owner only)
+     */
+    function deactivateAgent(uint256 agentId) external onlyOwner validAgentId(agentId) {
+        require(agents[agentId].active, "Already inactive");
+        agents[agentId].active = false;
+        emit AgentDeactivated(agentId);
+    }
 
+    /**
+     * @dev Update the registration fee (owner only)
+     */
+    function updateFee(uint256 newFee) external onlyOwner {
+        agentFee = newFee;
+        emit FeeUpdated(newFee);
+    }
 
-bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-bytes32 public constant MARKETPLACE_ROLE = keccak256("MARKETPLACE_ROLE");
+    /**
+     * @dev Set a new payment token (owner only)
+     */
+    function setPaymentToken(IERC20 newToken) external onlyOwner {
+        require(address(newToken) != address(0), "Invalid token");
+        paymentToken = newToken;
+        emit PaymentTokenUpdated(address(newToken));
+    }
 
-
-event AgentRegistered(uint256 indexed agentId, address indexed owner, string ipfsCid);
-
-
-constructor(IERC20 _paymentToken, uint256 _agentFee) {
-paymentToken = _paymentToken;
-agentFee = _agentFee;
-_setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-_setupRole(ADMIN_ROLE, msg.sender);
-}
-
-
-modifier onlyAgentOwner(uint256 agentId) {
-require(agents[agentId].owner == msg.sender, "Not agent owner");
-_;
-}
-
-
-function registerAgent(string calldata ipfsCid) external nonReentrant returns (uint256) {
-require(paymentToken.transferFrom(msg.sender, address(this), agentFee), "Payment failed");
-agentCount++;
-agents[agentCount] = Agent(msg.sender, ipfsCid, true);
-emit AgentRegistered(agentCount, msg.sender, ipfsCid);
-return agentCount;
-}
-
-
-function getAgent(uint256 agentId) external view override returns (address owner, string memory ipfsCid, bool active) {
-Agent storage agent = agents[agentId];
-return (agent.owner, agent.ipfsCid, agent.active);
-}
-
-
-function deactivateAgent(uint256 agentId) external onlyRole(ADMIN_ROLE) {
-agents[agentId].active = false;
-}
-
-
-function updateFee(uint256 newFee) external onlyRole(ADMIN_ROLE) {
-agentFee = newFee;
-}
-
-
-function setPaymentToken(IERC20 newToken) external onlyRole(ADMIN_ROLE) {
-paymentToken = newToken;
-}
+    /**
+     * @dev Emergency withdraw function (owner only)
+     */
+    function emergencyWithdraw(address token, uint256 amount) external onlyOwner {
+        if (token == address(0)) {
+            uint256 balance = address(this).balance;
+            uint256 withdrawAmount = amount == 0 ? balance : amount;
+            require(withdrawAmount <= balance, "Insufficient balance");
+            (bool success, ) = payable(msg.sender).call{value: withdrawAmount}("");
+            require(success, "ETH transfer failed");
+        } else {
+            IERC20 tokenContract = IERC20(token);
+            uint256 balance = tokenContract.balanceOf(address(this));
+            uint256 withdrawAmount = amount == 0 ? balance : amount;
+            require(withdrawAmount <= balance, "Insufficient balance");
+            require(tokenContract.transfer(msg.sender, withdrawAmount), "Token transfer failed");
+        }
+    }
 }
