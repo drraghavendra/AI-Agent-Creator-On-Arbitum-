@@ -107,6 +107,30 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 
 ---
 
+# AI Agents Backend (Node.js)
+
+
+## Setup
+
+
+1. Copy `.env.example` → `.env` and fill values.
+2. Start Postgres + Redis via Docker: `docker-compose up -d`.
+3. Run DB migration: `npm run migrate` (or apply via your preferred tool).
+4. Install deps: `npm install`.
+5. Start dev server: `npm run dev`.
+
+
+## Endpoints
+
+
+POST /api/agents
+Body: { name, owner, config }
+-> Pins to IPFS, registers on-chain with backend signer, returns agent row + tx
+
+
+GET /api/agents/:id
+-> Returns stored agent
+
 # Development Roadmap
 
 **Phase 1: Core Infrastructure**
