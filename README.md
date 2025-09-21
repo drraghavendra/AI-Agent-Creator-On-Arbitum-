@@ -99,7 +99,6 @@ To be the leading platform for creating and deploying AI-powered decentralized a
 
 * **Blockchain**: Arbitrum (EVM L2)
 * **Smart Contracts**: Solidity
-* **Off-Chain Core (Rig)**: Rust + ethers-rs
 * **AI/ML Modules**: Python/Rust
 * **UI**: React + Next.js
 * **Data Layer**: Postgres + Redis + IPFS
